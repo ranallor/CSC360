@@ -1,0 +1,10 @@
+C:\Users\ranal\source\repos\CentralService\CentralService\bin\Debug\CentralService.exe.config
+C:\Users\ranal\source\repos\CentralService\CentralService\bin\Debug\CentralService.exe
+C:\Users\ranal\source\repos\CentralService\CentralService\bin\Debug\CentralService.pdb
+C:\Users\ranal\source\repos\CentralService\CentralService\obj\Debug\CentralService.csprojAssemblyReference.cache
+C:\Users\ranal\source\repos\CentralService\CentralService\obj\Debug\CentralService.statusWindow.resources
+C:\Users\ranal\source\repos\CentralService\CentralService\obj\Debug\CentralService.Properties.Resources.resources
+C:\Users\ranal\source\repos\CentralService\CentralService\obj\Debug\CentralService.csproj.GenerateResource.cache
+C:\Users\ranal\source\repos\CentralService\CentralService\obj\Debug\CentralService.csproj.CoreCompileInputs.cache
+C:\Users\ranal\source\repos\CentralService\CentralService\obj\Debug\CentralService.exe
+C:\Users\ranal\source\repos\CentralService\CentralService\obj\Debug\CentralService.pdb
