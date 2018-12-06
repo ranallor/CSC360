@@ -23,8 +23,8 @@ public class UDPClient {
         try {
             DatagramSocket s = new DatagramSocket();
             String message = "Request";
-            byte[] buf = message.getBytes();
-            byte[] enMes =crypto.encrypteMessage(buf);
+            byte[] enMes = message.getBytes();
+            //byte[] enMes =crypto.encrypteMessage(buf);
             InetAddress address = InetAddress.getByName(sn);
             DatagramPacket packet = new DatagramPacket(enMes, enMes.length, 
                                     address, sp);
@@ -32,7 +32,7 @@ public class UDPClient {
             Thread receive = new Thread(new receive());
             receive.start();
            
-            System.out.println("Received from gramma: " + new String(buf));
+            
         } catch (SocketException ex) {
             System.out.println("Ooops" + ex);
             return false;
@@ -42,9 +42,9 @@ public class UDPClient {
         } catch (IOException ex) {
             System.out.println("Ooops" + ex);
             return false;
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
+        }/* catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
-       }
+       }*/
         return true;
     }
     
@@ -133,8 +133,8 @@ public class UDPClient {
         try {
             DatagramSocket s = new DatagramSocket();
             String message = "Disconnect";
-            byte[] buf = message.getBytes();
-            byte[] enMes =crypto.encrypteMessage(buf);
+            byte[] enMes = message.getBytes();
+            //byte[] enMes = crypto.encrypteMessage(buf);
             InetAddress address = InetAddress.getByName(sn);
             DatagramPacket packet = new DatagramPacket(enMes, enMes.length, 
                                     address, sp);
@@ -142,7 +142,7 @@ public class UDPClient {
             Thread receive = new Thread(new receive());
             receive.start();
            
-            System.out.println("Received from gramma: " + new String(buf));
+            System.out.println("Received from gramma: " + new String(enMes));
         } catch (SocketException ex) {
             System.out.println("Ooops" + ex);
             return false;
@@ -152,9 +152,9 @@ public class UDPClient {
         } catch (IOException ex) {
             System.out.println("Ooops" + ex);
             return false;
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
+        } /*catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
-       }
+       }*/
         return true;
         
     }
