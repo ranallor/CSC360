@@ -40,6 +40,7 @@ private final UDPClient client;
         clientOutputArea = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         outputLabel = new javax.swing.JLabel();
+        discconnectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Client");
@@ -82,6 +83,13 @@ private final UDPClient client;
 
         outputLabel.setText("Output:");
 
+        discconnectButton.setText("Disconnect");
+        discconnectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                discconnectButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -91,20 +99,23 @@ private final UDPClient client;
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
                     .addComponent(outputLabel)
-                    .addComponent(jLabel1)
+                    .addComponent(clientTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(clientHostAddressLabel)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(clientHostAddressLabel)
+                                .addGap(18, 18, 18)
+                                .addComponent(clientHostAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(clientPortNumberLabel)
+                                .addGap(18, 18, 18)
+                                .addComponent(clientPortNumberField, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel1))
                         .addGap(18, 18, 18)
-                        .addComponent(clientHostAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(clientPortNumberLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(clientPortNumberField, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(sendButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)))
-                    .addComponent(clientTextField, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                            .addComponent(discconnectButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(110, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -118,8 +129,10 @@ private final UDPClient client;
                     .addComponent(clientHostAddressLabel)
                     .addComponent(connectButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel1)
-                .addGap(9, 9, 9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(discconnectButton))
+                .addGap(4, 4, 4)
                 .addComponent(clientTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(sendButton)
@@ -127,7 +140,7 @@ private final UDPClient client;
                 .addComponent(outputLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
 
         pack();
@@ -163,6 +176,15 @@ private final UDPClient client;
         client.sendPeers(null, clientTextField.getText());
         
     }//GEN-LAST:event_sendButtonActionPerformed
+
+    private void discconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discconnectButtonActionPerformed
+            if(client.disconnect()){
+                clientOutputArea.append("You have been disconnceted\n");
+            }else{
+                clientOutputArea.append("Disconnect failed, try again.\n");
+            }
+            
+    }//GEN-LAST:event_discconnectButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -210,6 +232,7 @@ private final UDPClient client;
     private javax.swing.JLabel clientPortNumberLabel;
     private javax.swing.JTextField clientTextField;
     private javax.swing.JButton connectButton;
+    private javax.swing.JButton discconnectButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel outputLabel;

@@ -74,7 +74,7 @@ public class UDPClient {
                 
             }
             if(header.startsWith("Stop")){
-                stopMessage();
+                disconnect();
             }
             if(header.startsWith("From peer")){
                 
@@ -127,14 +127,37 @@ public class UDPClient {
        return false;
     }
 
-    private void stopMessage() {
-        try{
-        DatagramSocket s = new DatagramSocket();
-        String message = "Stop";
+    public boolean disconnect() {
+        String sn = "10.18.40.20";
+        int sp = 55555;
+        try {
+            DatagramSocket s = new DatagramSocket();
+            String message = "Disconnect";
+            byte[] buf = message.getBytes();
+            byte[] enMes =crypto.encrypteMessage(buf);
+            InetAddress address = InetAddress.getByName(sn);
+            DatagramPacket packet = new DatagramPacket(enMes, enMes.length, 
+                                    address, sp);
+            s.send(packet);
+            Thread receive = new Thread(new receive());
+            receive.start();
+           
+            System.out.println("Received from gramma: " + new String(buf));
         } catch (SocketException ex) {
+            System.out.println("Ooops" + ex);
+            return false;
+        } catch (UnknownHostException ex) {
+            System.out.println("Ooops" + ex);
+            return false;
+        } catch (IOException ex) {
+            System.out.println("Ooops" + ex);
+            return false;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
        }
+        return true;
         
     }
     
 }
+
