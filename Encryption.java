@@ -1,12 +1,13 @@
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,18 +20,27 @@ import javax.crypto.spec.SecretKeySpec;
  * @author Luca
  */
 public class Encryption {
-    
+    private final SecureRandom ran = new SecureRandom();
+    private SecretKey secretKey;
     public Encryption(){
         
     }
     
-    public byte[] encrypteMessage(byte[] message, byte[] keyBytes)
+    public byte[] encrypteMessage(byte[] message)
     throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        KeyGenerator keygen = KeyGenerator.getInstance("AES");
+        keygen.init(256, ran);
+        Cipher encryptor = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        secretKey = keygen.generateKey();
+        encryptor.init(Cipher.ENCRYPT_MODE, secretKey);
+        return encryptor.doFinal(message);
         
-        return cipher.doFinal(message);
-        
+    }
+    public byte[] decryptMessage(byte[] encryptedMessage) 
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        Cipher encryptor = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        encryptor.init(Cipher.DECRYPT_MODE, secretKey);
+        byte[] decryptedMessage = encryptor.doFinal(encryptedMessage);
+        return decryptedMessage;
     }
 }

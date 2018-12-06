@@ -10,10 +10,13 @@
  */
 public class Client extends javax.swing.JFrame {
 int count = 0;
+private final UDPClient client;
+
     /**
      * Creates new form Server
      */
     public Client() {
+        client = new UDPClient();
         initComponents();
     }
 
@@ -39,6 +42,7 @@ int count = 0;
         outputLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Client");
 
         clientPortNumberField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -87,21 +91,20 @@ int count = 0;
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
                     .addComponent(outputLabel)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel1)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(clientHostAddressLabel)
-                            .addGap(18, 18, 18)
-                            .addComponent(clientHostAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(clientPortNumberLabel)
-                            .addGap(18, 18, 18)
-                            .addComponent(clientPortNumberField, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(sendButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)))
-                        .addComponent(clientTextField, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(jLabel1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(clientHostAddressLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(clientHostAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(clientPortNumberLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(clientPortNumberField, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(sendButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)))
+                    .addComponent(clientTextField, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap(110, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -140,19 +143,25 @@ int count = 0;
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         count++;
-        
         if(count <= 1){
             clientOutputArea.append("Connecting ports.\n");
         }
         else{
             clientOutputArea.append("You are already connected.\n");
         }
+        if(client.connect()){
+            clientOutputArea.append("Connected!\n");
+        }else{
+            clientOutputArea.append("Connection failed. \n");
+        }
+        
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
-        clientOutputArea.append("\nYou said: " + clientTextField.getText() + "\n");
         
-        //serverOutputArea.append(clientTextField.getText());
+        clientOutputArea.append("\nYou said: " + clientTextField.getText() + "\n");
+        client.sendPeers(null, clientTextField.getText());
+        
     }//GEN-LAST:event_sendButtonActionPerformed
 
     /**

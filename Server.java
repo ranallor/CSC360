@@ -37,6 +37,7 @@ public class Server extends javax.swing.JFrame {
         outputLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Server");
 
         serverHostAddressLabel.setText("Host Address:");
 

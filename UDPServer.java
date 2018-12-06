@@ -11,27 +11,32 @@
 
 import java.io.*;
 import java.net.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class UDPServer {
-    
-
+    private Encryption crypto;
     private ArrayList<InetAddress> clients;
     private DatagramPacket toSave;
     private DatagramSocket serverSocket;
     
     public UDPServer(){
         clients = new ArrayList<InetAddress>();
+        crypto = new Encryption();
     }
     
-    public void listen() throws SocketException, IOException {
+    public void listen() throws SocketException, IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         serverSocket = new DatagramSocket(55555);
         byte[] receiveData = new byte[1024];
         byte[] sendData = new byte[1024];
         while(true){
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             serverSocket.receive(receivePacket);
-            String sentence = new String( receivePacket.getData());
+            String sentence = new String( crypto.decryptMessage(receivePacket.getData()));
             if(sentence.startsWith("Request")) {
                 toSave = receivePacket;
                 addToNetwork();
