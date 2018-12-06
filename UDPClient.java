@@ -29,7 +29,8 @@ public class UDPClient {
             DatagramPacket packet = new DatagramPacket(enMes, enMes.length, 
                                     address, sp);
             s.send(packet);
-            receive();
+            Thread receive = new Thread(new receive());
+            receive.start();
            
             System.out.println("Received from gramma: " + new String(buf));
         } catch (SocketException ex) {
@@ -47,7 +48,10 @@ public class UDPClient {
         return true;
     }
     
-    public void receive(){
+    public class receive implements Runnable{
+       
+       @Override 
+       public void run(){
        try {    
            boolean received = true;
            DatagramSocket socket = new DatagramSocket(55555);
@@ -90,7 +94,7 @@ public class UDPClient {
        } catch (IOException ex) {
            Logger.getLogger(UDPClient.class.getName()).log(Level.SEVERE, null, ex);
        }
-       
+    }
     }
     
     public boolean sendPeers(DatagramPacket info, String input){
