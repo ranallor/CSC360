@@ -17,11 +17,15 @@ public class UDPServer {
     
 
     private ArrayList<InetAddress> clients;
+    private ArrayList<Integer> ports;
     private DatagramPacket toSave;
     private DatagramSocket serverSocket;
+    private Boolean running;
     
     public UDPServer(){
         clients = new ArrayList<InetAddress>();
+        ports = new ArrayList<Integer>();
+        running = false;
     }
     
     public void listen() throws SocketException, IOException {
@@ -48,11 +52,11 @@ public class UDPServer {
         
     }
     
-    public void sendFirstNotification() {
+    public void sendFirstNotification() { 
         InetAddress address = toSave.getAddress();
         int port = toSave.getPort();
         try {
-            String message = "";
+            String message = "First";
             byte[] buf = message.getBytes();
             DatagramPacket packet = new DatagramPacket(buf, buf.length, 
                                     address, port);
@@ -67,24 +71,66 @@ public class UDPServer {
         
     }
     
-    public void addToNetwork() {
+    public void addToNetwork() { // This adds a user to the network environment
         if(clients.size() == 0) {
             sendFirstNotification();
         }
+        if(clients.size() >= 2) {
+            sendStopNotification();
+        }
         clients.add(toSave.getAddress());
+        ports.add(toSave.getPort());
+        if(clients.size() >=2) {
+            beginService();
+        }
     }
     
-    public void beginService() {
+    public void beginService() { //This sends the users their neighbor's IP info, The Client is okay to start transmitting packets.
         if(clients.size() < 2) {
-            
+            //TODO INFORM CLIENT THE NETWORK CANT RUN BECAUSE THERE IS ONLY ONE USER
         }
         else {
             int max = clients.size();
             int count = 0;
             while(count != max) {
-                
+                InetAddress address = clients.get(count);
+                int port = ports.get(count);
+                try {
+                    String message = "Recipient//" + clients.get(count + 1) + "//" + ports.get(count + 1);
+                    byte[] buf = message.getBytes();
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length, 
+                                    address, port);
+                    serverSocket.send(packet);
+                    count++;
+                } catch (SocketException ex) {
+                    System.out.println("Ooops" + ex);
+                } catch (UnknownHostException ex) {
+                    System.out.println("Ooops" + ex);
+                } catch (IOException ex) {
+                    System.out.println("Ooops" + ex);
+                }
+            }
+            try {
+                String message = "Recipient//" + clients.get(0) + "//" + ports.get(0);
+                byte[] buf = message.getBytes();
+                InetAddress address = clients.get(max);
+                int port = ports.get(max);
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, 
+                                    address, port);
+                serverSocket.send(packet);
+                running = true;
+            } catch (SocketException ex) {
+                System.out.println("Ooops" + ex);
+            } catch (UnknownHostException ex) {
+                System.out.println("Ooops" + ex);
+            } catch (IOException ex) {
+                System.out.println("Ooops" + ex);
             }
         }
+    }
+
+    private void sendStopNotification() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     
