@@ -12,42 +12,56 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTextArea;
 
 public class UDPServer {
     
 
     private ArrayList<InetAddress> clients;
-    private ArrayList<Integer> ports;
     private DatagramPacket toSave;
     private DatagramSocket serverSocket;
     private Boolean running;
+    private JTextArea textBox;
     
-    public UDPServer(){
+    public UDPServer(JTextArea textArea) throws SocketException {
         clients = new ArrayList<InetAddress>();
-        ports = new ArrayList<Integer>();
         running = false;
+        textBox = textArea;
+        serverSocket = new DatagramSocket(55555);
     }
     
-    public void listen() throws SocketException, IOException {
-        serverSocket = new DatagramSocket(55555);
+    
+    public class listen implements Runnable {
         byte[] receiveData = new byte[1024];
         byte[] sendData = new byte[1024];
-        while(true){
-            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            serverSocket.receive(receivePacket);
-            String sentence = new String( receivePacket.getData());
-            if(sentence.startsWith("Request")) {
-                toSave = receivePacket;
-                addToNetwork();
-            }
-            System.out.println("RECEIVED: " + sentence);
-            InetAddress IPAddress = receivePacket.getAddress();
-            int port = 55555;
-            String capitalizedSentence = sentence;
-            sendData = capitalizedSentence.getBytes();
-            DatagramPacket sendPacket =
-            new DatagramPacket(sendData, sendData.length, IPAddress, port);
-            serverSocket.send(sendPacket);
+        @Override
+        public void run() {
+            while(true) {
+                try {
+                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                    serverSocket.receive(receivePacket);
+                    String sentence = new String( receivePacket.getData());
+                    if(sentence.startsWith("Request")) {
+                        toSave = receivePacket;
+                        addToNetwork();
+                    }
+                    else if(sentence.startsWith("Permission")) {
+                        toSave = receivePacket;
+                        messagePermission();
+                    }
+                    System.out.println("RECEIVED: " + sentence);
+                    InetAddress IPAddress = receivePacket.getAddress();
+                    int port = 55555;
+                    String capitalizedSentence = sentence;
+                    sendData = capitalizedSentence.getBytes();
+                    DatagramPacket sendPacket =
+                    new DatagramPacket(sendData, sendData.length, IPAddress, port);
+                    serverSocket.send(sendPacket);
+                }
+                catch (Exception ex) {}
+            }    
         }
         
     }
@@ -71,17 +85,25 @@ public class UDPServer {
         
     }
     
+    public void ListenThread() 
+    {
+         Thread listener = new Thread(new listen());
+         listener.start();
+    }
+    
     public void addToNetwork() { // This adds a user to the network environment
         if(clients.size() == 0) {
             sendFirstNotification();
+            textBox.append("First user added");
         }
         if(clients.size() >= 2) {
             sendStopNotification();
+            textBox.append("Adding another user, stopping and restarting network service");
         }
         clients.add(toSave.getAddress());
-        ports.add(toSave.getPort());
         if(clients.size() >=2) {
             beginService();
+            textBox.append("User added, network service activated");
         }
     }
     
@@ -90,13 +112,13 @@ public class UDPServer {
             //TODO INFORM CLIENT THE NETWORK CANT RUN BECAUSE THERE IS ONLY ONE USER
         }
         else {
-            int max = clients.size();
+            int max = clients.size() - 1;
             int count = 0;
             while(count != max) {
                 InetAddress address = clients.get(count);
-                int port = ports.get(count);
+                int port = 55555;
                 try {
-                    String message = "Recipient//" + clients.get(count + 1) + "//" + ports.get(count + 1);
+                    String message = "Recipient//" + clients.get(count + 1);
                     byte[] buf = message.getBytes();
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, 
                                     address, port);
@@ -111,10 +133,10 @@ public class UDPServer {
                 }
             }
             try {
-                String message = "Recipient//" + clients.get(0) + "//" + ports.get(0);
+                String message = "Recipient//" + clients.get(0);
                 byte[] buf = message.getBytes();
                 InetAddress address = clients.get(max);
-                int port = ports.get(max);
+                int port = 55555;
                 DatagramPacket packet = new DatagramPacket(buf, buf.length, 
                                     address, port);
                 serverSocket.send(packet);
@@ -128,10 +150,17 @@ public class UDPServer {
             }
         }
     }
+    
+    public void messagePermission() {
+        String message = new String(toSave.getData());
+        String[] data = message.split("//");
+    }
 
-    private void sendStopNotification() {
+    public void sendStopNotification() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+
     
     
 }
